@@ -12,7 +12,6 @@ from create_bot import bot
 
 
 async def questions(callback: CallbackQuery, state: FSMContext):
-    print('678')
     user_id = callback.from_user.id
     question_id = None  # id вопроса, которое показывается в сообщении
     text_dict = {
@@ -43,7 +42,7 @@ async def questions(callback: CallbackQuery, state: FSMContext):
             data[f'answer_{question_id - 1}'] = callback.data.split(':')[1]
     if callback.data.split(':')[0] == 'back':
         question_id = int(callback.data.split(':')[1]) - 1
-    if question_id < 3:
+    if question_id < 15:
         text = text_dict[f'q{question_id}']
         kb = test_keyboard(question_id)
         await callback.message.answer(text, reply_markup=kb)
@@ -53,7 +52,7 @@ async def questions(callback: CallbackQuery, state: FSMContext):
         text = None
         async with state.proxy() as data:
             week_id = int(data.as_dict()['week_id'])
-        for i in range(1, 3):
+        for i in range(1, 15):
             async with state.proxy() as data:
                 result = int(data.as_dict()[f'answer_{i}'])
             if i % 2 == 1:

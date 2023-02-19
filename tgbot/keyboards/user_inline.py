@@ -30,7 +30,7 @@ def main_menu_kb():
     practices_button = InlineKeyboardButton(text='🧘‍♂️ Практики', callback_data='practices:menu')
     course_questions_button = InlineKeyboardButton(text='❔ Вопросы по курсу', callback_data='support:support')
     support_project_button = InlineKeyboardButton(text='💰 Поддержать проект', callback_data='donate:start')
-    leave_feedback_button = InlineKeyboardButton(text='💬 Написать отзыв', callback_data='feedback:support')
+    leave_feedback_button = InlineKeyboardButton(text='💬 Написать отзыв', callback_data='support:feedback')
     keyboard = InlineKeyboardMarkup(row_width=1).add(profile_button, current_result_button, practices_button,
                                                      course_questions_button, support_project_button,
                                                      leave_feedback_button)

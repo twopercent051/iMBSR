@@ -103,7 +103,7 @@ def get_date_kb():
 
 def practices_kb(week_id):
     keyboard = InlineKeyboardMarkup(row_width=1)
-    for i in range(1, week_id):
+    for i in range(1, week_id + 1):
         week_button = InlineKeyboardButton(text=f'Неделя {i}', callback_data=f'practices:{i}')
         keyboard.add(week_button)
     return keyboard

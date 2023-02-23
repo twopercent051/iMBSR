@@ -12,10 +12,11 @@ from tgbot.models.sql_connector import sql_start
 
 from create_bot import bot, dp, config, scheduler
 
+
 logger = logging.getLogger(__name__)
 file_log = logging.FileHandler("logger.log")
 console_out = logging.StreamHandler()
-logging.basicConfig(handlers=(file_log, console_out), level=logging.WARNING)
+logging.basicConfig(handlers=(file_log, console_out), level=logging.INFO)
 
 
 def register_all_middlewares(dp, config):
@@ -24,7 +25,6 @@ def register_all_middlewares(dp, config):
 
 def register_all_filters(dp):
     dp.filters_factory.bind(AdminFilter)
-    pass
 
 
 def register_all_handlers(dp):
@@ -36,7 +36,7 @@ def register_all_handlers(dp):
 
 async def main():
     logging.basicConfig(
-        level=logging.WARNING,
+        level=logging.INFO,
         format=u'%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - %(message)s',
     )
     logger.info("Starting bot")
@@ -46,12 +46,9 @@ async def main():
     register_all_middlewares(dp, config)
     register_all_filters(dp)
     register_all_handlers(dp)
-    scheduler.start()
-    scheduler_jobs()
-
     sql_start()
-
-    # start
+    scheduler.start()
+    await scheduler_jobs()
     try:
         await dp.start_polling()
     finally:

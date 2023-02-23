@@ -19,6 +19,7 @@ admin_group = config.misc.admin_group
 
 
 async def user_start(message: Message):
+    print(111)
     user_id = message.from_user.id
     is_user = await check_user_sql(user_id)
     if is_user['c'] == 0:

@@ -1,7 +1,7 @@
 import time
 import asyncio
 from random import randint
-import psutil
+
 
 
 from tgbot.models.sql_connector import *

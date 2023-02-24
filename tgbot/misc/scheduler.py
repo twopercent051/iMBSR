@@ -264,5 +264,5 @@ async def user_scheduler():
                 await reminder(user)
 
 
-def scheduler_jobs():
-    scheduler.add_job(user_scheduler, "interval", seconds=60, max_instances=40, misfire_grace_time=None)
+async def scheduler_jobs():
+    scheduler.add_job(user_scheduler, "interval", seconds=60)

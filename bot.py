@@ -16,7 +16,7 @@ from create_bot import bot, dp, config, scheduler
 logger = logging.getLogger(__name__)
 file_log = logging.FileHandler("logger.log")
 console_out = logging.StreamHandler()
-logging.basicConfig(handlers=(file_log, console_out), level=logging.WARNING)
+logging.basicConfig(handlers=(file_log, console_out), level=logging.INFO)
 
 
 def register_all_middlewares(dp, config):
@@ -46,10 +46,11 @@ async def main():
     register_all_middlewares(dp, config)
     register_all_filters(dp)
     register_all_handlers(dp)
-    sql_start()
-    scheduler.start()
-    scheduler_jobs()
+    await sql_start()
+
+    await scheduler_jobs()
     try:
+        scheduler.start()
         await dp.start_polling()
     finally:
         await dp.storage.close()

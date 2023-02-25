@@ -254,6 +254,7 @@ async def reminder(user):
 
 
 async def user_scheduler():
+    print(time.time())
     user_list = await get_users_sql()
     for user in user_list:
         if user['next_step_time'] != 0:
@@ -265,4 +266,4 @@ async def user_scheduler():
 
 
 async def scheduler_jobs():
-    scheduler.add_job(user_scheduler, "interval", seconds=60)
+    scheduler.add_job(user_scheduler, "interval", seconds=2)

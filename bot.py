@@ -1,5 +1,8 @@
 import asyncio
 import logging
+import time
+from multiprocessing import Process
+import threading
 
 from tgbot.filters.admin import AdminFilter
 from tgbot.handlers.admin import register_admin
@@ -46,17 +49,17 @@ async def main():
     register_all_middlewares(dp, config)
     register_all_filters(dp)
     register_all_handlers(dp)
-    await sql_start()
+    # await sql_start()
 
-    await scheduler_jobs()
+    # await scheduler_jobs()
     try:
-        scheduler.start()
+        # scheduler.start()
         await dp.start_polling()
     finally:
         await dp.storage.close()
         await dp.storage.wait_closed()
         await bot.session.close()
-        scheduler.shutdown(True)
+        # scheduler.shutdown(True)
 
 
 if __name__ == '__main__':

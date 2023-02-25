@@ -61,5 +61,6 @@ venv.bak/
 .pyre/
 .idea/*
 .env
+logger.log
 
 

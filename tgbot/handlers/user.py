@@ -98,6 +98,7 @@ async def main_menu(callback: CallbackQuery):
 
 
 async def get_profile(callback: CallbackQuery):
+    print(111)
     user_id = callback.from_user.id
     profile = await get_profile_sql(user_id)
     text = [

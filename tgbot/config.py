@@ -14,7 +14,7 @@ class DbConfig:
 @dataclass
 class TgBot:
     token: str
-    admin_ids: list[int]
+    admin_ids: list  # [int]
     use_redis: bool
 
 

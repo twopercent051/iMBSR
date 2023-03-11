@@ -266,4 +266,5 @@ async def user_scheduler():
 
 
 async def scheduler_jobs():
-    scheduler.add_job(user_scheduler, "interval", seconds=59, max_instances=3)
+    # scheduler.add_job(user_scheduler, "interval", seconds=59, max_instances=3)
+    pass

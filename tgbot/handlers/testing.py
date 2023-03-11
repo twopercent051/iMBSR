@@ -3,12 +3,52 @@ import time
 from aiogram import Dispatcher
 from aiogram.types import CallbackQuery
 from aiogram.dispatcher import FSMContext
-from aiogram.utils.markdown import hstrikethrough
+from aiogram.utils.markdown import hstrikethrough, hspoiler
 
 from tgbot.misc.states import FSMUser
 from tgbot.keyboards.test_inline import test_keyboard, finish_test_kb
 from tgbot.models.sql_connector import *
 from create_bot import bot
+
+
+def test_descriptor(anxiety, depression):
+    if anxiety <= 7:
+        anxiety_text = [
+            '<span class="tg-spoiler"><i>Норма</i> - отсутствие достоверно выраженных симптомов',
+            'тревоги.\n<b><i>Рекомендуется<i><b> - 3 раза в неделю уделять себе время и делать практики нашего курса',
+            'для поддержания уровня тревоги в норме.</span>'
+        ]
+    elif 8 <= anxiety <= 10:
+        anxiety_text = [
+            '<span class="tg-spoiler"><i>Средне-выраженная тревога</i> (умеренная степень тревожности, эмоциональное',
+            'напряжение, нет возможности расслабится в полной мере).\n<b><i>Рекомендуется</i></b> - ежедневно уделять',
+            'себе время и делать практики нашего курса.</span>'
+        ]
+    else:
+        anxiety_text = [
+            '<span class="tg-spoiler"><i>Клинически выраженная тревога</i> (высокая степень тревожности, сильное',
+            'эмоциональное напряжение, состояние близкое к паническим атакам).\n<b><i>Рекомендуется</i></b> - помимо',
+            'данного курса обратиться к психотерапевту или неврологу.</span>'
+        ]
+    if depression <= 7:
+        depression_text = [
+            '<span class="tg-spoiler"><i>Норма</i> - отсутствие достоверно выраженных симптомов',
+            'депрессии.\n<b><i>Рекомендуется<i><b> - 3 раза в неделю уделять себе время и делать практики нашего курса',
+            'для поддержания уровня депрессии в норме.</span>'
+        ]
+    elif 8 <= depression <= 10:
+        depression_text = [
+            '<span class="tg-spoiler"><i>Средне-выраженная депрессия</i> (умеренная степень тревожности, эмоциональное',
+            'напряжение, нет возможности расслабится в полной мере).\n<b><i>Рекомендуется</i></b> - помимо данного',
+            'курса обратиться к психотерапевту.</span>'
+        ]
+    else:
+        depression_text = [
+            '<span class="tg-spoiler"><i>Клинически выраженная депрессия</i> (снижение настроения, высокая',
+            'утомляемость, пессимистичное восприятие, нарушение сна и аппетита).\n<b><i>Рекомендуется</i></b> - помимо',
+            'данного курса обратиться к психотерапевту.'
+        ]
+    return ''.join(anxiety_text), ''.join(depression_text)
 
 
 async def questions(callback: CallbackQuery, state: FSMContext):
@@ -59,12 +99,15 @@ async def questions(callback: CallbackQuery, state: FSMContext):
                 anxiety += result
             else:
                 depression += result
+        description = test_descriptor(anxiety, depression)
         if week_id == 0:
             text = [
                 'Тест завершён!\n',
                 '⭐️ <b><u>Текущая оценка состояния</u></b>\n',
-                f'<b>Тревога:</b> {anxiety} баллов\n',
-                f'<b>Депрессия:</b> {depression} баллов\n',
+                f'<b>Тревога:</b> {anxiety} баллов',
+                f'{description[0]}\n',
+                f'<b>Депрессия:</b> {depression} баллов',
+                description[1],
                 'Текущий результат обновлён',
                 'Теперь подумайте, когда хотели бы начать прохождение курса?'
             ]
@@ -76,8 +119,10 @@ async def questions(callback: CallbackQuery, state: FSMContext):
             text = [
                 'Тест завершён!\n',
                 '⭐️ <b><u>Текущая оценка состояния</u></b>\n',
-                f'<b>Тревога:</b> {hstrikethrough(old_result["anxiety"])} → {anxiety} баллов\n',
-                f'<b>Депрессия:</b> {hstrikethrough(old_result["depression"])} → {depression} баллов\n',
+                f'<b>Тревога:</b> {hstrikethrough(old_result["anxiety"])} → {anxiety} баллов',
+                f'{description[0]}\n',
+                f'<b>Депрессия:</b> {hstrikethrough(old_result["depression"])} → {depression} баллов',
+                description[1],
                 'Текущий результат обновлён'
             ]
         if week_id == 8:
@@ -85,8 +130,10 @@ async def questions(callback: CallbackQuery, state: FSMContext):
             text = [
                 'Поздравляем с завершением курса!!\n',
                 '⭐️ <b><u>Текущая оценка состояния</u></b>\n',
-                f'<b>Тревога:</b> {anxiety} баллов\n',
-                f'<b>Депрессия:</b> {depression} баллов\n',
+                f'<b>Тревога:</b> {anxiety} баллов',
+                f'{description[0]}\n',
+                f'<b>Депрессия:</b> {depression} баллов',
+                description[1],
             ]
         await create_test_result(user_id, week_id, anxiety, depression)
         kb = finish_test_kb(week_id)

@@ -2,12 +2,14 @@ from aiogram import Dispatcher
 from aiogram.types import Message, CallbackQuery
 from aiogram.dispatcher import FSMContext
 from aiogram_calendar import simple_cal_callback, SimpleCalendar
+from aiogram.utils.markdown import hspoiler, hitalic
 import aiogram_calendar
 
 from tgbot.misc.states import FSMUser
 from tgbot.keyboards.user_inline import *
 from tgbot.models.sql_connector import *
 from tgbot.misc.datetimer import next_step_timer
+from tgbot.handlers.testing import test_descriptor
 from create_bot import bot
 
 from datetime import datetime
@@ -28,7 +30,7 @@ async def user_start(message: Message):
     else:
         test_result = await get_test_result_sql(user_id, 0)
         if test_result is None:
-            text = '💛 Для продолжения курса оцените ваше текущее состояние - пройдите тест 👉'
+            text = '<span class="tg-spoiler">💛 <b>Для</b> продолжения курса оцените ваше текущее состояние - пройдите тест 👉</span>'
             kb = user_start_test_kb(0)
         else:
             text = 'Главное меню'
@@ -98,7 +100,6 @@ async def main_menu(callback: CallbackQuery):
 
 
 async def get_profile(callback: CallbackQuery):
-    print(111)
     user_id = callback.from_user.id
     profile = await get_profile_sql(user_id)
     text = [
@@ -124,6 +125,10 @@ async def edit_profile_start(callback: CallbackQuery):
 async def edit_profile_enter(callback: CallbackQuery):
     field = callback.data.split(':')[1]
     text, kb = None, menu_kb()
+    time_text = [
+        '🕓 Выберите время для выполнения ежедневной практики (медитация/йога) по 30 минут. В выбранное время пришлём',
+        'вам напоминалку 🔔. (Введите время в формате hh:mm через двоеточие не позднее 21:00)'
+    ]
     if field == 'name':
         await FSMUser.edit_name.set()
         text = 'Введите новое имя'
@@ -142,10 +147,10 @@ async def edit_profile_enter(callback: CallbackQuery):
         kb = user_timezone_kb()
     if field == 'time_menu':
         await FSMUser.edit_time_menu.set()
-        text = 'Введите время в формате hh:mm через двоеточие не позднее 21:00'
+        text = ''.join(time_text)
     if field == 'time_task':
         await FSMUser.edit_time_task.set()
-        text = 'Введите время в формате hh:mm через двоеточие не позднее 21:00'
+        text = ''.join(time_text)
     if field == 'date':
         text = 'Выберите дату начала курса'
         kb = await aiogram_calendar.SimpleCalendar().start_calendar()
@@ -310,11 +315,14 @@ async def current_result(callback: CallbackQuery):
 
     ]
     if tests is not None:
+        desc = test_descriptor(tests['anxiety'], tests['depression'])
         text_test = [
             '-' * 10,
             '\n⭐️ <b><u>Текущая оценка состояния</u></b>\n',
-            f'<b>Тревога:</b> {tests["anxiety"]} баллов\n',
-            f'<b>Депрессия:</b> {tests["depression"]} баллов\n'
+            f'<b>Тревога:</b> {tests["anxiety"]} баллов',
+            f'{desc[0]}\n',
+            f'<b>Депрессия:</b> {tests["depression"]} баллов',
+            f'{desc[1]}\n'
         ]
         text.extend(text_test)
     if profile['next_step_time'] is None or profile['next_step_time'] > time.time():

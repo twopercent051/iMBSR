@@ -78,8 +78,8 @@ async def sql_start():
             other TEXT
             );
             """)
-        for i in range(1, 9):
-            await cursor.execute(f'INSERT IGNORE INTO texts (week_id) VALUES ({i});')
+        # for i in range(1, 9):
+        #     await cursor.execute(f'INSERT IGNORE INTO texts (week_id) VALUES ({i});')
         await cursor.execute("ALTER TABLE users CONVERT TO CHARACTER SET utf8mb4")
         await cursor.execute("ALTER TABLE tests CONVERT TO CHARACTER SET utf8mb4")
         await cursor.execute("ALTER TABLE practices CONVERT TO CHARACTER SET utf8mb4")
